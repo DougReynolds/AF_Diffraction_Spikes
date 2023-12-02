@@ -1,5 +1,7 @@
 # Diffraction Spikes
 
+![AF Diffraction Spikes](/assets/astroAF_logo2.png "AF Diffraction Spikes")
+
 ## Description:
 This script adds diffraction spikes to stars in astrophotography images.
 
