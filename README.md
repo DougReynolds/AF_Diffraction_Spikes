@@ -54,6 +54,9 @@ Within the AF Diffraction Spikes GUI you will find a series of numeric sliders w
 ## General Note
 AF Diffraction Spikes configuration can take a lot of trial and error.  Every image is different and requires unique sets of paramegters.  So, with that said, there is no one right way.  Work with the sliders and experiment.  Preview your output image as often as you like, it is created nearly instantaneously.
 
+## License
+[MIT](./LICENSE)
+
 ## Credit
 AF Diffraction Spikes written by: Douglas Reynolds
 
