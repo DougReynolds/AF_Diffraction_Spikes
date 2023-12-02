@@ -118,6 +118,9 @@ class ImageProcessorGUI:
         self.root = root
         self.root.title("AstroAF - AF Diffraction Spikes")
         self.root.minsize(width=900, height=700)
+
+        # Placeholder for logo image
+        self.logo_image = tk.PhotoImage(file="./assets/astroAF_logo2.png")
         
         # Variables for storing user input
         self.input_image_var = tk.StringVar()
@@ -145,6 +148,10 @@ class ImageProcessorGUI:
         self.processed_image_label.bind("<Button-1>", self.open_processed_image)
 
     def create_widgets(self):
+        # Logo
+        logo_label = tk.Label(self.root, image=self.logo_image)
+        logo_label.grid(row=0, column=0, padx=10, pady=10, sticky="w")
+
         tk.Label(self.root, text="Input and Output Files").grid(row=0, column=0, columnspan=4, pady=10)
 
         # Input Image
