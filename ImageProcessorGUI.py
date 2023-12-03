@@ -3,6 +3,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 import subprocess
 from ImageProcessor import ImageProcessor
+import cv2
 
 class ImageProcessorGUI:
     def __init__(self, root):
