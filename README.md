@@ -29,7 +29,9 @@ https://www.python.org/download/other/
 
 ### Dependencies
 tkinter: % `pip3 install tkinter`
+
 cv2: % `pip3 install opencv-python`
+
 numpy: % `pip3 install numpy`
 
 ## Installation:
