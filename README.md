@@ -28,11 +28,14 @@ For other platforms:
 https://www.python.org/download/other/
 
 ### Dependencies
-tkinter: % `pip3 install tkinter`
+
+tkinter If you are using Homebrew (otherwise tkinter is a standard python lib): % `pip3 install tkinter`
 
 cv2: % `pip3 install opencv-python`
 
 numpy: % `pip3 install numpy`
+
+Pillow: % `pip3 install Pillow`
 
 ## Installation:
 Download the zip file for this script or check out the project with git.
