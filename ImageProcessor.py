@@ -72,8 +72,8 @@ class ImageProcessor:
             x2_h, y2_h = self.rotate_point((x, y), (x2_h, y2_h), angle_rad)
 
             # Draw vertical and horizontal spikes on the alpha channel
-            cv2.line(alpha_channel, (x1_v, y1_v), (x2_v, y2_v), 255, spike_thickness)
-            cv2.line(alpha_channel, (x1_h, y1_h), (x2_h, y2_h), 255, spike_thickness)
+            self.draw_spikes(alpha_channel, (x1_v, y1_v), (x2_v, y2_v), spike_thickness)
+            self.draw_spikes(alpha_channel, (x1_h, y1_h), (x2_h, y2_h), spike_thickness)
 
         # Apply Gaussian blur to the alpha channel (only on the spikes)
         blur_kernel_size = int(blur_kernel_size * blur_multiplier)
@@ -92,8 +92,22 @@ class ImageProcessor:
 
         return result_image
 
+    def draw_spikes(self, alpha_channel, start_point, end_point, thickness):
+        spike_length = len(start_point)  # Assuming start_point and end_point have the same length
+        points_x = np.linspace(start_point[0], end_point[0], num=spike_length * 2)
+        points_y = np.linspace(start_point[1], end_point[1], num=spike_length * 2)
+
+        # Calculate the gradient for a smooth transition
+        gradient = np.linspace(0, 1, num=spike_length * 4)
+
+        # Iterate over the points and draw spikes on the alpha channel
+        length = len(points_x) // 2  # Half the length for symmetric drawing
+        for i in range(length * 2):  # Iterate up to the total length
+            alpha_value = int(255 * gradient[i])  # Scale the gradient to the alpha channel range
+            cv2.line(alpha_channel, (int(points_x[i]), int(points_y[i])), (int(points_x[length * 2 - i - 1]), int(points_y[length * 2 - i - 1])), alpha_value, thickness)
+
     def rotate_point(self, center, point, angle_rad):
-        """Rotate a point around a center."""
+        # Rotate a point around a center
         x, y = point
         cx, cy = center
         new_x = int(cx + (x - cx) * np.cos(angle_rad) - (y - cy) * np.sin(angle_rad))
