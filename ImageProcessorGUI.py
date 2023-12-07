@@ -44,53 +44,53 @@ class ImageProcessorGUI:
 
     def create_widgets(self):
         # Logo
-        logo_label = tk.Label(self.root, image=self.logo_image)
+        logo_label = tk.Label(self.root, image=self.logo_image, bg="black")
         logo_label.grid(row=0, column=0, padx=20, pady=20, sticky="w")
 
-        tk.Label(self.root, text="Input and Output Files", bg="black", font=("Helvetica", 16)).grid(row=0, column=0, columnspan=4, pady=10)
+        tk.Label(self.root, text="Input and Output Files", bg="black", fg="white", font=("Helvetica", 24)).grid(row=0, column=0, columnspan=4, pady=10)
 
         # Input Image
-        self.add_tooltip(tk.Label(self.root, text="Select Input TIFF Image: ℹ", padx=20, bg="black"), "Select the input image for processing.")
+        self.add_tooltip(tk.Label(self.root, text="Select Input TIFF Image: ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "Select the input image for processing.")
         tk.Entry(self.root, textvariable=self.input_image_var, width=30).grid(row=1, column=2)
-        tk.Button(self.root, text="Browse", command=self.browse_input_image).grid(row=1, column=3, padx=20, pady=10)
+        tk.Button(self.root, text="Browse", font=("Helvetica", 20), command=self.browse_input_image).grid(row=1, column=3, padx=20, pady=10)
 
         # Output Image
-        self.add_tooltip(tk.Label(self.root, text="Select/Name Output TIFF Image: ℹ", padx=20, bg="black"), "Select or provide a name for the processed output image.")
+        self.add_tooltip(tk.Label(self.root, text="Select/Name Output TIFF Image: ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "Select or provide a name for the processed output image.")
         tk.Entry(self.root, textvariable=self.output_image_var, width=30).grid(row=2, column=2)
-        tk.Button(self.root, text="Browse", command=self.browse_output_image).grid(row=2, column=3, pady=10)
+        tk.Button(self.root, text="Browse", font=("Helvetica", 20), command=self.browse_output_image).grid(row=2, column=3, pady=10)
 
-        tk.Label(self.root, text="Diffraction Spikes Configuration", bg="black", font=("Helvetica", 16)).grid(row=3, column=0, columnspan=4, pady=10)
+        tk.Label(self.root, text="Diffraction Spikes Configuration", bg="black", fg="white", font=("Helvetica", 24)).grid(row=3, column=0, columnspan=4, pady=10)
 
         # Minimum Threshold Slider
-        self.add_tooltip(tk.Label(self.root, text="Set Minimum Threshold: ℹ", padx=20, bg="black"), "This value sets the lower limit for pixel intensity. \nPixels with intensity values below this threshold are considered \npart of the background and are not classified as stars.")
+        self.add_tooltip(tk.Label(self.root, text="Set Minimum Threshold: ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "This value sets the lower limit for pixel intensity. \nPixels with intensity values below this threshold are considered \npart of the background and are not classified as stars.")
         tk.Scale(self.root, from_=0, to=255, resolution=1, orient=tk.HORIZONTAL, variable=self.min_threshold_var).grid(row=4, column=2)
 
         # Maximum Threshold Slider
-        self.add_tooltip(tk.Label(self.root, text="Set Maximum Threshold: ℹ", padx=20, bg="black"), "This value sets the upper limit for pixel intensity. \nPixels with intensity values above this threshold \nare considered potential stars.")
+        self.add_tooltip(tk.Label(self.root, text="Set Maximum Threshold: ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "This value sets the upper limit for pixel intensity. \nPixels with intensity values above this threshold \nare considered potential stars.")
         tk.Scale(self.root, from_=0, to=255, resolution=1, orient=tk.HORIZONTAL, variable=self.max_threshold_var).grid(row=5, column=2)
 
         # Spike Length Multiplier Slider
-        self.add_tooltip(tk.Label(self.root, text="Set Spike Length Multiplier: ℹ", padx=20, bg="black"), "Adjust the length of the diffraction spikes.")
+        self.add_tooltip(tk.Label(self.root, text="Set Spike Length Multiplier: ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "Adjust the length of the diffraction spikes.")
         tk.Scale(self.root, from_=0, to=2, resolution=0.01, orient=tk.HORIZONTAL, variable=self.length_multiplier_var).grid(row=6, column=2)
 
         # Spike Thickness Multiplier Slider
-        self.add_tooltip(tk.Label(self.root, text="Set Spike Thickness Multiplier: ℹ", padx=20, bg="black"), "Adjust the thickness of the diffraction spikes.")
+        self.add_tooltip(tk.Label(self.root, text="Set Spike Thickness Multiplier: ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "Adjust the thickness of the diffraction spikes.")
         tk.Scale(self.root, from_=0, to=1, resolution=0.01, orient=tk.HORIZONTAL, variable=self.thickness_multiplier_var).grid(row=7, column=2)
 
         # Blur Kernel Size Slider
-        self.add_tooltip(tk.Label(self.root, text="Set Blur Kernel Size: ℹ", padx=20, bg="black"), "Set the size of the blur kernel applied to the spikes.")
+        self.add_tooltip(tk.Label(self.root, text="Set Blur Kernel Size: ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "Set the size of the blur kernel applied to the spikes.")
         tk.Scale(self.root, from_=1, to=50, resolution=2, orient=tk.HORIZONTAL, variable=self.blur_kernel_size_var).grid(row=8, column=2)
 
         # Blur Multiplier Slider
-        self.add_tooltip(tk.Label(self.root, text="Set Blur Multiplier: ℹ", padx=20, bg="black"), "Adjust the intensity of the blur applied to the spikes.")
+        self.add_tooltip(tk.Label(self.root, text="Set Blur Multiplier: ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "Adjust the intensity of the blur applied to the spikes.")
         tk.Scale(self.root, from_=0.1, to=2, resolution=0.01, orient=tk.HORIZONTAL, variable=self.blur_multiplier_var).grid(row=9, column=2)
 
         # Rotation Angle Slider
-        self.add_tooltip(tk.Label(self.root, text="Set Rotation Angle (degrees): ℹ", padx=20, bg="black"), "Set the rotation angle for the diffraction spikes.")
+        self.add_tooltip(tk.Label(self.root, text="Set Rotation Angle (degrees): ℹ", padx=20, bg="black", fg="white", font=("Helvetica", 20)), "Set the rotation angle for the diffraction spikes.")
         tk.Scale(self.root, from_=0, to=89, resolution=1, orient=tk.HORIZONTAL, variable=self.rotation_angle_var).grid(row=10, column=2)
 
         # Process Button
-        tk.Button(self.root, text="Process and Generate Image", command=self.process_image, height=3, width=30, font=("Helvetica", 20)).grid(row=11, column=0, columnspan=4, pady=10)
+        tk.Button(self.root, text="Process and Generate Image", command=self.process_image, height=3, width=30, font=("Helvetica", 24)).grid(row=11, column=0, columnspan=4, pady=10)
 
     def add_tooltip(self, widget, text):
         widget.grid(sticky="w", pady=(0, 10))
@@ -99,11 +99,13 @@ class ImageProcessorGUI:
 
     def show_tooltip(self, event, text):
         x, y, _, _ = event.widget.bbox("insert")
+        x += event.widget.winfo_rootx() + 300
         x += event.widget.winfo_rootx() + 25
         y += event.widget.winfo_rooty() + 25
         self.tooltip = tk.Toplevel(event.widget)
         self.tooltip.wm_overrideredirect(True)
         self.tooltip.wm_geometry(f"+{x}+{y}")
+
         label = tk.Label(self.tooltip, text=text, background="#1c1c1c", foreground="#ffffff", relief="solid", borderwidth=1)
         label.pack()
 
