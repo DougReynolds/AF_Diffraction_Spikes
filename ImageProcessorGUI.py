@@ -16,7 +16,7 @@ class ImageProcessorGUI:
 
         # Placeholder for logo image
         self.logo_image = tk.PhotoImage(file="./assets/astroAF_logo2.png")
-        
+
         # Variables for storing user input
         self.input_image_var = tk.StringVar()
         self.output_image_var = tk.StringVar()
@@ -28,18 +28,23 @@ class ImageProcessorGUI:
         self.blur_multiplier_var = tk.DoubleVar()
         self.rotation_angle_var = tk.DoubleVar()
 
-         # Create and pack widgets
+        # Create and pack widgets
         self.create_widgets()
 
         # Placeholder images for previews
         self.input_image_preview = ImageTk.PhotoImage(Image.new("RGB", (600, 600), "gray"))
         self.processed_image_preview = ImageTk.PhotoImage(Image.new("RGB", (600, 600), "gray"))
 
-        # Image previews
-        self.input_image_label = tk.Label(self.root, image=self.input_image_preview)
-        self.input_image_label.grid(row=12, column=1, padx=10, pady=10)
-        self.processed_image_label = tk.Label(self.root, image=self.processed_image_preview, cursor="hand2")
-        self.processed_image_label.grid(row=12, column=2, padx=10, pady=10)
+        # Image previews frame
+        self.image_previews_frame = tk.Frame(self.root, bg="black")
+        self.image_previews_frame.grid(row=12, column=0, columnspan=4, padx=10, pady=10, sticky="nsew")
+        self.root.grid_rowconfigure(12, weight=1)  # Allow the row to expand vertically
+        self.root.grid_columnconfigure(0, weight=1)  # Allow the column to expand horizontally
+
+        self.input_image_label = tk.Label(self.image_previews_frame, image=self.input_image_preview)
+        self.input_image_label.grid(row=0, column=0, padx=10, pady=10)
+        self.processed_image_label = tk.Label(self.image_previews_frame, image=self.processed_image_preview, cursor="hand2")
+        self.processed_image_label.grid(row=0, column=1, padx=10, pady=10)
         self.processed_image_label.bind("<Button-1>", self.open_processed_image)
 
     def create_widgets(self):
@@ -145,17 +150,6 @@ class ImageProcessorGUI:
     def update_input_image_preview(self, file_path):
         try:
             img = Image.open(file_path)
-            img.thumbnail((300, 200))
-            img = ImageTk.PhotoImage(img)
-            self.input_image_preview = img
-            self.input_image_label.configure(image=self.input_image_preview)
-            self.input_image_label.image = self.input_image_preview
-        except Exception as e:
-            print(f"Error updating input image preview: {e}")
-
-    def update_input_image_preview(self, file_path):
-        try:
-            img = Image.open(file_path)
             img = self.scale_image(img, width=600)  # Added this line
             img = ImageTk.PhotoImage(img)
             self.input_image_preview = img
@@ -188,3 +182,8 @@ class ImageProcessorGUI:
             subprocess.run(["open", output_image_path], check=True)
         except Exception as e:
             print(f"Error opening processed image: {e}")
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = ImageProcessorGUI(root)
+    root.mainloop()
