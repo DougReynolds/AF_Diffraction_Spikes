@@ -1,0 +1,7 @@
+numpy
+pillow
+opencv-python
+astropy
+matplotlib
+scikit-image
+photutils>=1.12

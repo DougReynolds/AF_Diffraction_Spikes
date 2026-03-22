@@ -1,85 +1,175 @@
-# Diffraction Spikes
+# StarSpikesPy (AstroAF Diffraction Spikes) — V2
 
-![AF Diffraction Spikes](/assets/astroAF_logo2.png "AF Diffraction Spikes")
+![AF Diffraction Spikes](/assets/astroAF_logo2.png "AstroAF Diffraction Spikes")
 
-## Description:
-This script adds diffraction spikes to stars in astrophotography images.
+## 🚀 Overview
+StarSpikesPy is a desktop astrophotography tool that adds realistic diffraction spikes to stars while preserving scientific image integrity.
 
-**This script only processes TIFF input images and only processes TIFF output images.**
+Version 2 transforms the original script into a fully interactive application with real-time preview, multi-format support, and astrophotography-aware processing.
 
-Add an image to be processed and provide an output file name.
+---
 
-![AF Diffraction Spikes](/assets/ui_view.png "AF Diffraction Spikes")
+## ✨ Key Features (V2)
 
-## Donations
-If you like this software and would like to help support development and maintenance of this project, please consider buying me a coffee
+### 🖥️ Interactive Desktop UI
+- Dual preview panes (Original vs Processed)
+- Smooth zoom and pan (trackpad + mouse)
+- Real-time parameter tuning
+- Tooltips for every control
+- Responsive, non-blocking UI (async processing)
 
-<a href="https://www.buymeacoffee.com/AstroAF" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
+---
 
-## Installation Requirements:
-Computer running at least Python 3.11 with tkinter support
+### 🎯 Diffraction Spike Engine
+- Adjustable spike length, thickness, blur, and rotation
+- Intelligent star detection
+- Fast processing with near-instant preview
+- Designed specifically for astrophotography data
 
-% `brew install python-tk`
+---
 
-For Windows installation, please refer to the Python page:
-https://www.python.org/downloads/windows/
+### 🧪 Scientific FIT Support (NEW)
+- Load FIT / FITS files
+- Preserve original scientific data
+- Preserve FIT metadata (headers, WCS, etc.)
+- Two FIT save modes:
 
-For other platforms:
-https://www.python.org/download/other/
+#### 🔬 Scientific Mode (default)
+- Injects spikes into original data
+- Maintains dynamic range
+- Outputs mono FIT (astro-correct)
+
+#### 🎨 RGB Display Mode
+- Saves processed image as RGB FIT cube
+- Matches visual preview exactly
+
+---
+
+### 🖼️ Multi-Format Support
+
+#### Input Formats
+- FIT / FITS
+- TIFF
+- PNG
+- JPEG
+
+#### Output Formats
+- FIT / FITS (scientific + RGB modes)
+- TIFF (lossless, recommended)
+- PNG
+- JPEG
+
+---
+
+### ⚡ Performance & UX Enhancements
+- Background threading for load + processing
+- Animated status indicators (Loading… / Processing…)
+- Star count estimation
+- Clean state reset between images
+- No UI freezing
+
+---
+
+## 📸 UI Overview
+
+![AF Diffraction Spikes](/assets/ui_view.png "UI Overview")
+
+---
+
+## 🛠️ Installation (Development Mode)
+
+### Requirements
+- Python 3.11+
+- tkinter
+
+Mac (Homebrew):
+```
+brew install python-tk
+```
+
+---
 
 ### Dependencies
 
-tkinter: If you are using Homebrew (otherwise tkinter is a standard python lib): % `brew install python-tk`
+```
+pip install -r requirements.txt
+```
 
-cv2: % `pip3 install opencv-python`
+---
 
-numpy: % `pip3 install numpy`
+## ▶️ Run the Application
 
-Pillow: % `pip3 install Pillow`
+From the project directory:
 
+```
+python3 ImageProcessorGUI.py
+```
 
-## Installation:
-Download the zip file for this script or check out the project with git.
+---
 
-Un-archive the zip file into a directory of your choice
+## 📦 Packaging (Coming Soon)
 
-Assuming your python installation is run using `python3`, issue the following command from within the directory you installed the script.  How you run python is dependent upon your platform and installation.  For example on Mac with Homebrew installed Python 3, your python command may be `python3`.  On other platforms it may just be `python`.
+Planned:
+- macOS `.app`
+- Windows `.exe`
+- Installer / DMG distribution
 
-% `python3 AF_diffraction_spikes_gui.py`
+---
 
-## Usage
-### Selecting Input and Output
-Select your input file (to be processed) and processed output file name.  For processed output file you can also choose an existing file.  This is convenient when you are working with an image and testing configuration changes to the same output file.  When choosing an existing output file, the file will be overwritten upon each processing run.
+## 🧭 Usage
 
-![Seleting Input and Output Image Selections](/assets/input_output.png "Input and Output Image Selections")
+### 1. Load Image
+- Supports FIT, TIFF, PNG, JPG
 
-### Configuring Parameters
-Within the AF Diffraction Spikes GUI you will find a series of numeric sliders which are used for assigning parameter vaules for specific calculations.  Please hover over each information icon ( <sup>i</sup> ) next to the control label for more information on each parameter.
+### 2. Adjust Parameters
+Use sliders to control:
+- Minimum / Maximum Threshold
+- Spike Length
+- Spike Thickness
+- Blur Kernel
+- Blur Strength
+- Rotation Angle
 
-![Setting Configuration Parameters](/assets/configuration.png "Setting Configuration Parameters")
+Hover over the ⓘ icons for detailed explanations.
 
-1. Set Minium Threshold: This value sets the lower limit for pixel intensity. Pixels with intensity values below this threshold are considered part of the background and are not classified as stars.
-2. Set Maximum Threshold: This value sets the upper limit for pixel intensity. Pixels with intensity values above this threshold are considered potential stars.
-3. Set Spike Length Multiplier: Adjust the length of the diffraction spikes.
-4. Set Spike Thickness Multiplier: Adjust the thickness of the diffraction spikes.
-5. Set Blur Kernel Size: Set the size of the blur kernel applied to the spikes.
-6. Set Blur Multiplier: Adjust the intensity of the blur applied to the spikes.
-7. Set Rotation Angle: Set the rotation angle for the diffraction spikes.
-8. Process and Generate Image: Clicking this button will process and generate an image with diffraction spike configurations applied.
-9. Preview Images: The left preview is gthe original image entered into the input image selection.  The right preview image is the result of processing diffraction spikes.
-**Note** You may click on the output image preview to view a larger image.
+---
 
-## General Note
-AF Diffraction Spikes configuration can take a lot of trial and error.  Every image is different and requires unique sets of paramegters.  So, with that said, there is no one right way.  Work with the sliders and experiment.  Preview your output image as often as you like, it is created nearly instantaneously.
+### 3. Process
+- Generates diffraction spikes
+- Updates preview instantly
 
-## License
-[MIT](./LICENSE)
+---
 
-## Credit
-AF Diffraction Spikes written by: Douglas Reynolds
+### 4. Save
+- Choose output format (TIFF recommended)
+- FIT supports scientific or RGB modes
 
-doug [at] astroaf [dot] space
+---
 
-https://astroaf.space
+## ⚠️ Notes
 
-https://Youtube.com/@AstroAF
+- FIT files are typically **monochrome** in astrophotography
+- RGB FIT output is for visualization compatibility
+- TIFF is the best format for processed image workflows
+
+---
+
+## ❤️ Support
+
+If you like this project, consider supporting development:
+
+<a href="https://www.buymeacoffee.com/AstroAF" target="_blank">
+<img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;">
+</a>
+
+---
+
+## 📜 License
+MIT License
+
+---
+
+## 👤 Author
+Douglas Reynolds  
+🌐 https://astroaf.space  
+📺 https://youtube.com/@AstroAF
