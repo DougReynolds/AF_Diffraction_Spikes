@@ -90,6 +90,9 @@ class ImageProcessorGUI:
         self.blur_multiplier_var = tk.DoubleVar(value=0.4)
         self.rotation_angle_var = tk.DoubleVar(value=30)
 
+        # FITS save mode (UI-controlled)
+        self.fits_scientific_var = tk.BooleanVar(value=False)
+
         # Star count display (QoL)
         self.star_count_var = tk.StringVar(value="Stars detected: -")
 
@@ -114,6 +117,10 @@ class ImageProcessorGUI:
         self.processed_image_preview = ImageTk.PhotoImage(
             Image.new("RGB", (600, 600), "gray")
         )
+
+        # Preset selection
+        self.preset_var = tk.StringVar(value="none")
+        self.preset_buttons = {}
 
         # Create and pack widgets
         self.create_widgets()
@@ -203,18 +210,22 @@ class ImageProcessorGUI:
         )
         row += 1
 
-        # Instructions label (UX)
-        tk.Label(
-            control_frame,
-            text="Tip: Scroll to zoom, click-drag to pan",
-            bg="black",
-            fg="#aaaaaa",
-            font=("Helvetica", 10),
-        ).grid(row=row, column=0, columnspan=2, sticky="w", pady=(5, 10))
-        row += 1
-
         # Files
         section("Files")
+        # Filename display (above Load button)
+        self.input_image_name_var = tk.StringVar(value="")
+        filename_label = tk.Label(
+            control_frame,
+            textvariable=self.input_image_name_var,
+            bg="black",
+            fg="white",
+            font=("Helvetica", 11),
+            anchor="w",
+            wraplength=200,
+            justify="left",
+        )
+        filename_label.grid(row=row, column=0, columnspan=2, sticky="w", pady=(0, 5))
+        row += 1
         tk.Button(
             control_frame, text="Load Image", command=self.browse_input_image
         ).grid(row=row, column=0, columnspan=2, sticky="ew", pady=5)
@@ -286,6 +297,63 @@ class ImageProcessorGUI:
             "Rotates the spike pattern. Useful for aligning spikes to match telescope orientation.",
         )
 
+        # Presets (under Spike Shape)
+        preset_frame = tk.Frame(control_frame, bg="black")
+        preset_frame.grid(row=row, column=0, columnspan=2, sticky="w", pady=5)
+
+        preset_label = tk.Label(
+            preset_frame,
+            text="Presets",
+            bg="black",
+            fg="white",
+            font=("Helvetica", 12, "bold"),
+        )
+        preset_label.pack(side="left", padx=(0, 5))
+
+        preset_info = tk.Label(
+            preset_frame,
+            text="ⓘ",
+            bg="black",
+            fg="#00d4ff",
+            font=("Helvetica", 12, "bold"),
+            cursor="hand2",
+        )
+        preset_info.pack(side="left", padx=(0, 10))
+
+        preset_tooltip = (
+            "Presets adjust spike intensity:\n"
+            "• Mild: shorter, thinner spikes\n"
+            "• Medium: default look\n"
+            "• Hot: longer, thicker spikes\n\n"
+            "Only affects Length and Thickness."
+        )
+
+        preset_info.bind("<Enter>", lambda e: self.show_tooltip(e, preset_tooltip))
+        preset_info.bind("<Leave>", lambda e: self.hide_tooltip())
+
+        def set_preset(value):
+            self.preset_var.set(value)
+            self.apply_preset_to_sliders(value)
+
+        for name in ["mild", "medium", "hot"]:
+            btn = tk.Radiobutton(
+                preset_frame,
+                text=name.capitalize(),
+                value=name,
+                variable=self.preset_var,
+                command=lambda v=name: set_preset(v),
+                bg="black",
+                fg="white",
+                selectcolor="#2a2a2a",
+                activebackground="black",
+                activeforeground="white",
+                state="disabled",
+            )
+            btn.pack(side="left", padx=5)
+            self.preset_buttons[name] = btn
+
+        row += 1
+
         # Optical
         section("Optical")
         slider(
@@ -305,16 +373,39 @@ class ImageProcessorGUI:
             "Controls how soft or sharp the spikes appear. Higher values create smoother, more diffuse spikes.",
         )
 
-        # Process button
-        tk.Button(
-            control_frame,
+        # Process button with info tooltip
+        process_frame = tk.Frame(control_frame, bg="black")
+        process_frame.grid(row=row, column=0, columnspan=2, pady=20, sticky="ew")
+
+        process_btn = tk.Button(
+            process_frame,
             text="PROCESS",
             command=self.process_image,
             font=("Helvetica", 16),
             bg="#00d4ff",
-        ).grid(row=row, column=0, columnspan=2, pady=20, sticky="ew")
+        )
+        process_btn.pack(side="left", fill="x", expand=True)
 
-        # Save button (disabled until first process)
+        process_info = tk.Label(
+            process_frame,
+            text="ⓘ",
+            bg="black",
+            fg="#00d4ff",
+            font=("Helvetica", 12, "bold"),
+            cursor="hand2",
+        )
+        process_info.pack(side="left", padx=(5, 0))
+
+        process_tooltip = (
+            "Preview processing:\n"
+            "• Displayed in 8-bit for performance\n"
+            "• Final save uses full original data"
+        )
+
+        process_info.bind("<Enter>", lambda e: self.show_tooltip(e, process_tooltip))
+        process_info.bind("<Leave>", lambda e: self.hide_tooltip())
+
+        # Save button
         self.save_btn = tk.Button(
             control_frame,
             text="Save Image",
@@ -330,18 +421,60 @@ class ImageProcessorGUI:
             row=row + 1, column=0, columnspan=2, pady=(5, 10), sticky="ew"
         )
 
-        # Status/Loading indicator under PROCESS and Save buttons
+        # FITS Save Mode
+        fits_frame = tk.Frame(control_frame, bg="black")
+        fits_frame.grid(row=row + 2, column=0, columnspan=2, sticky="w", pady=(0, 10))
+
+        self.fits_checkbox = tk.Checkbutton(
+            fits_frame,
+            text="Scientific FITS?",
+            variable=self.fits_scientific_var,
+            bg="black",
+            fg="white",
+            selectcolor="#2a2a2a",
+            activebackground="black",
+            activeforeground="white",
+            state="disabled",
+        )
+        self.fits_checkbox.pack(side="left")
+
+        info_btn = tk.Label(
+            fits_frame,
+            text="ⓘ",
+            bg="black",
+            fg="#00d4ff",
+            font=("Helvetica", 12, "bold"),
+            cursor="hand2",
+        )
+        info_btn.pack(side="left", padx=(5, 0))
+
+        tooltip_text = (
+            "Scientific FITS:\n"
+            "* Requires FITS image\n"
+            "• Preserves original metadata (WCS)\n"
+            "• Includes spikes"
+        )
+
+        info_btn.bind("<Enter>", lambda e: self.show_tooltip(e, tooltip_text))
+        info_btn.bind("<Leave>", lambda e: self.hide_tooltip())
+
+        # Status label
         tk.Label(
             control_frame,
             textvariable=self.status_var,
             bg="black",
             fg="#00d4ff",
             font=("Helvetica", 14),
-        ).grid(row=row + 2, column=0, columnspan=2, pady=(5, 10))
+        ).grid(row=row + 3, column=0, columnspan=2, pady=(5, 10))
 
-        # Preview (fixed-size frames)
-        input_container = tk.Frame(preview_frame, width=600, height=600, bg="black")
-        input_container.pack(side="left", padx=10, pady=10)
+        # === PREVIEW AREA ===
+        left_preview_frame = tk.Frame(preview_frame, bg="black")
+        left_preview_frame.pack(side="left", padx=10, pady=10, anchor="n")
+
+        input_container = tk.Frame(
+            left_preview_frame, width=600, height=600, bg="black"
+        )
+        input_container.pack()
         input_container.pack_propagate(False)
 
         self.input_image_view = tk.Canvas(
@@ -356,7 +489,7 @@ class ImageProcessorGUI:
         )
 
         processed_container = tk.Frame(preview_frame, width=600, height=600, bg="black")
-        processed_container.pack(side="left", padx=10, pady=10)
+        processed_container.pack(side="left", padx=10, pady=10, anchor="n")
         processed_container.pack_propagate(False)
 
         self.processed_image_view = tk.Canvas(
@@ -369,8 +502,9 @@ class ImageProcessorGUI:
         self.processed_placeholder = self.processed_image_view.create_text(
             300, 300, text="Load Image", fill="#555555", font=("Helvetica", 22, "bold")
         )
+
         self.processed_image_view.bind("<Button-1>", self.open_processed_image)
-        # Guidance label (centered under previews using grid)
+
         guidance_label = tk.Label(
             self.root,
             text="Scroll to zoom • Click-drag to pan",
@@ -380,11 +514,21 @@ class ImageProcessorGUI:
         )
         guidance_label.grid(row=1, column=1, sticky="ew", pady=(0, 10))
 
-        # Enable zoom + pan
         for widget in [self.input_image_view, self.processed_image_view]:
             widget.bind("<MouseWheel>", self.zoom_image)
             widget.bind("<ButtonPress-1>", self.start_pan)
             widget.bind("<B1-Motion>", self.do_pan)
+
+    def apply_preset_to_sliders(self, preset):
+        if preset == "mild":
+            scale = 0.75
+        elif preset == "hot":
+            scale = 1.35
+        else:
+            scale = 1.0
+
+        self.length_multiplier_var.set(1.2 * scale)
+        self.thickness_multiplier_var.set(0.35 * scale)
 
     def zoom_image(self, event):
         # Normalize delta
@@ -519,6 +663,73 @@ class ImageProcessorGUI:
         if hasattr(self, "tooltip"):
             self.tooltip.destroy()
 
+    def show_error_dialog(self, error, tb_text=None):
+        import tkinter as tk
+
+        full_error = tb_text or str(error)
+
+        # Copy to clipboard for easy reporting
+        try:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(full_error)
+        except Exception:
+            pass
+
+        # Clean user-facing message
+        error_text = str(error)
+        short_error = (
+            error_text.split(": ", 1)[-1] if ": " in error_text else error_text
+        )
+
+        # --- Custom dialog ---
+        dialog = tk.Toplevel(self.root)
+        dialog.title("Processing Error")
+        dialog.configure(bg="black")
+        dialog.resizable(False, False)
+
+        # Center dialog
+        dialog.update_idletasks()
+        w = 420
+        h = 220
+        x = (dialog.winfo_screenwidth() // 2) - (w // 2)
+        y = (dialog.winfo_screenheight() // 2) - (h // 2)
+        dialog.geometry(f"{w}x{h}+{x}+{y}")
+
+        # Logo
+        logo = tk.Label(dialog, image=self.logo_image, bg="black")
+        logo.pack(pady=(10, 5))
+
+        # Message
+        msg = tk.Label(
+            dialog,
+            text=(
+                "Something went wrong while processing your image.\n\n"
+                f"{short_error}\n\n"
+                "(Full details copied to clipboard)"
+            ),
+            bg="black",
+            fg="white",
+            font=("Helvetica", 12),
+            wraplength=380,
+            justify="center",
+        )
+        msg.pack(padx=20, pady=10)
+
+        # OK button
+        ok_btn = tk.Button(
+            dialog,
+            text="OK",
+            command=dialog.destroy,
+            bg="#00d4ff",
+            font=("Helvetica", 11, "bold"),
+            width=10,
+        )
+        ok_btn.pack(pady=(0, 10))
+
+        dialog.transient(self.root)
+        dialog.grab_set()
+        self.root.wait_window(dialog)
+
     def browse_input_image(self):
         file_path = filedialog.askopenfilename(
             filetypes=[
@@ -589,21 +800,62 @@ class ImageProcessorGUI:
             img = self._prepare_input_image(file_path)
             self.root.after(0, lambda: self._load_image_apply(file_path, img))
         except Exception as e:
-            print(f"Load error: {e}")
+            import traceback
+
+            tb = traceback.format_exc()
+            self.root.after(
+                0, lambda err=e, tb_text=tb: self.show_error_dialog(err, tb_text)
+            )
             self.root.after(0, self._load_image_complete)
 
     def _load_image_apply(self, file_path, img):
         try:
             self.input_image_var.set(file_path)
+            import os
+
+            self.input_image_name_var.set(os.path.basename(file_path))
             self.input_image_display = img.copy()
             img_tk = ImageTk.PhotoImage(img)
             self.input_image_preview = img_tk
-            self.input_image_view.itemconfig(self.input_image_id, image=img_tk)
+            # Reset canvas to avoid stale transforms/items
+            self.input_image_view.delete("all")
+            self.input_image_id = self.input_image_view.create_image(
+                300, 300, image=img_tk
+            )
             self.input_image_view.image = img_tk
+            self.input_placeholder = self.input_image_view.create_text(
+                300,
+                300,
+                text="Load Image",
+                fill="#555555",
+                font=("Helvetica", 22, "bold"),
+            )
             self.input_image_view.itemconfig(self.input_placeholder, state="hidden")
             self.processed_image_view.itemconfig(
                 self.processed_placeholder, text="Process Image", state="normal"
             )
+            # Enable FITS checkbox only for FITS inputs
+            if file_path.lower().endswith((".fit", ".fits")):
+                self.fits_checkbox.config(state="normal")
+            else:
+                self.fits_checkbox.config(state="disabled")
+                self.fits_scientific_var.set(False)
+            # Create processor with known baseline defaults (same as app startup)
+            self.processor = ImageProcessor(
+                file_path,
+                None,
+                self.min_threshold_var.get(),
+                self.max_threshold_var.get(),
+                1.2,
+                0.35,
+                15,
+                0.4,
+                30,
+            )
+            # Note: Removed renderer default-to-slider sync to preserve user slider values.
+            # Enable preset buttons after image load
+            for btn in self.preset_buttons.values():
+                btn.config(state="normal")
         finally:
             self._load_image_complete()
 
@@ -616,13 +868,20 @@ class ImageProcessorGUI:
             if hasattr(self, "processed_image_display"):
                 del self.processed_image_display
 
+            # Reset processed canvas
+            self.processed_image_view.delete("all")
             blank = ImageTk.PhotoImage(Image.new("RGB", (600, 600), "gray"))
             self.processed_image_preview = blank
-            self.processed_image_view.itemconfig(self.processed_image_id, image=blank)
+            self.processed_image_id = self.processed_image_view.create_image(
+                300, 300, image=blank
+            )
             self.processed_image_view.image = blank
-
-            self.processed_image_view.itemconfig(
-                self.processed_placeholder, text="Process Image", state="normal"
+            self.processed_placeholder = self.processed_image_view.create_text(
+                300,
+                300,
+                text="Process Image",
+                fill="#555555",
+                font=("Helvetica", 22, "bold"),
             )
 
             if hasattr(self, "save_btn"):
@@ -765,25 +1024,39 @@ class ImageProcessorGUI:
             blur_multiplier = self.blur_multiplier_var.get()
             rotation_angle = self.rotation_angle_var.get()
 
-            processor = ImageProcessor(
-                input_image,
-                output_image,
-                min_threshold,
-                max_threshold,
-                length_multiplier,
-                thickness_multiplier,
-                blur_kernel_size,
-                blur_multiplier,
-                rotation_angle,
-            )
+            if not hasattr(self, "processor") or self.processor is None:
+                self.processor = ImageProcessor(
+                    input_image,
+                    output_image,
+                    min_threshold,
+                    max_threshold,
+                    length_multiplier,
+                    thickness_multiplier,
+                    blur_kernel_size,
+                    blur_multiplier,
+                    rotation_angle,
+                )
+            else:
+                # update existing processor values
+                self.processor.min_threshold = min_threshold
+                self.processor.max_threshold = max_threshold
+                self.processor.spike_length_multiplier = length_multiplier
+                self.processor.spike_thickness_multiplier = thickness_multiplier
+                self.processor.blur_kernel_size = blur_kernel_size
+                self.processor.blur_multiplier = blur_multiplier
+                self.processor.rotation_angle = rotation_angle
 
-            processed_image = processor.process()
-            processor.save()
+            processed_image = self.processor.process()
 
             self.root.after(0, self._process_image_complete, processed_image)
 
         except Exception as e:
-            print(f"Processing error: {e}")
+            import traceback
+
+            tb = traceback.format_exc()
+            self.root.after(
+                0, lambda err=e, tb_text=tb: self.show_error_dialog(err, tb_text)
+            )
             self.root.after(0, self._process_image_complete, None)
 
     def _process_image_complete(self, processed_image):
@@ -803,23 +1076,9 @@ class ImageProcessorGUI:
 
     def save_image(self):
         try:
-            file_path = filedialog.asksaveasfilename(
-                defaultextension=".png",
-                filetypes=[
-                    ("PNG files", "*.png"),
-                    ("TIFF files", "*.tif *.tiff"),
-                    ("JPEG files", "*.jpg"),
-                    ("FITS files", "*.fit *.fits"),
-                    ("All files", "*.*"),
-                ],
-            )
-
-            if not file_path:
-                return
-
             processor = ImageProcessor(
                 self.input_image_var.get(),
-                file_path,
+                None,  # output path now handled internally
                 self.min_threshold_var.get(),
                 self.max_threshold_var.get(),
                 self.length_multiplier_var.get(),
@@ -829,12 +1088,14 @@ class ImageProcessorGUI:
                 self.rotation_angle_var.get(),
             )
 
-            if hasattr(self, "processed_image_display"):
-                processor.processed_image = self.processed_image_display
-                processor.save()
+            processor.fit_save_mode = (
+                "scientific" if self.fits_scientific_var.get() else "visual"
+            )
+
+            processor.save()
 
         except Exception as e:
-            print(f"Save error: {e}")
+            self.show_error_dialog(e)
 
     def animate_processing(self):
         dots = "." * (self._processing_dots % 4)

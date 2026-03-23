@@ -1,51 +1,44 @@
 # StarSpikesPy (AstroAF Diffraction Spikes) — V2
 
-![AF Diffraction Spikes](/assets/astroAF_logo2.png "AstroAF Diffraction Spikes")
+![AF Diffraction Spikes](/assets/astroAF_logo2.png "AF Diffraction Spikes")
 
-## 🚀 Overview
-StarSpikesPy is a desktop astrophotography tool that adds realistic diffraction spikes to stars while preserving scientific image integrity.
+## Overview
+StarSpikesPy is a desktop astrophotography tool that adds realistic diffraction spikes to stars while preserving image fidelity and supporting astrophotography-oriented workflows.
 
-Version 2 transforms the original script into a fully interactive application with real-time preview, multi-format support, and astrophotography-aware processing.
+Version 2 evolves the original TIFF-only script into a multi-format interactive desktop application with real-time preview, format-specific spike rendering, and improved save handling.
 
 ---
 
-## ✨ Key Features (V2)
+## Key Features
 
-### 🖥️ Interactive Desktop UI
+### Interactive Desktop UI
 - Dual preview panes (Original vs Processed)
-- Smooth zoom and pan (trackpad + mouse)
+- Smooth zoom and pan
 - Real-time parameter tuning
-- Tooltips for every control
-- Responsive, non-blocking UI (async processing)
+- Tooltips for UI controls
+- Background-threaded load and processing for responsive interaction
 
----
-
-### 🎯 Diffraction Spike Engine
+### Diffraction Spike Engine
 - Adjustable spike length, thickness, blur, and rotation
 - Intelligent star detection
-- Fast processing with near-instant preview
-- Designed specifically for astrophotography data
+- Per-format spike renderer tuning
+- Fast preview-oriented processing workflow
 
----
-
-### 🧪 Scientific FIT Support (NEW)
+### FIT / FITS Support
 - Load FIT / FITS files
-- Preserve original scientific data
-- Preserve FIT metadata (headers, WCS, etc.)
+- Preserve scientific source data for save workflows
+- Preserve FIT metadata / headers where available
 - Two FIT save modes:
 
-#### 🔬 Scientific Mode (default)
-- Injects spikes into original data
-- Maintains dynamic range
-- Outputs mono FIT (astro-correct)
+#### Scientific Mode
+- Injects spikes into original FIT data
+- Maintains scientific-style output workflow
 
-#### 🎨 RGB Display Mode
+#### RGB Display Mode
 - Saves processed image as RGB FIT cube
-- Matches visual preview exactly
+- Intended to match the previewed visual result
 
----
-
-### 🖼️ Multi-Format Support
+### Multi-Format Support
 
 #### Input Formats
 - FIT / FITS
@@ -54,108 +47,194 @@ Version 2 transforms the original script into a fully interactive application wi
 - JPEG
 
 #### Output Formats
-- FIT / FITS (scientific + RGB modes)
-- TIFF (lossless, recommended)
+- FIT / FITS
+- TIFF
 - PNG
 - JPEG
 
----
-
-### ⚡ Performance & UX Enhancements
-- Background threading for load + processing
-- Animated status indicators (Loading… / Processing…)
-- Star count estimation
-- Clean state reset between images
-- No UI freezing
+### Renderer-Aware Defaults
+- Format-specific spike renderers
+- Renderer-owned tuning defaults
+- Consistent type handling across processing and saving
+- Cleaner architecture for adding future formats such as XISF
 
 ---
 
-## 📸 UI Overview
+## UI Overview
 
 ![AF Diffraction Spikes](/assets/ui_view.png "UI Overview")
 
 ---
 
-## 🛠️ Installation (Development Mode)
+## Installation
 
 ### Requirements
 - Python 3.11+
-- tkinter
+- tkinter support
 
-Mac (Homebrew):
+---
+
+
+### 1. Clone the Repository
+```bash
+# HTTPS (recommended)
+git clone https://github.com/DougReynolds/AF_Diffraction_Spikes.git
+cd StarSpikesPy
+
+# OR (SSH, if configured)
+# git clone git@github.com:DougReynolds/AF_Diffraction_Spikes.git
 ```
-brew install python-tk
+
+### Or Download (No Git Required)
+
+Download the latest version as a ZIP:
+https://github.com/DougReynolds/AF_Diffraction_Spikes/archive/refs/heads/main.zip
+
+Then extract and open a terminal in the extracted folder.
+
+---
+
+### 2. Create a Virtual Environment (Recommended)
+
+macOS / Linux:
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Windows (PowerShell):
+```powershell
+python -m venv venv
+venv\Scripts\activate
 ```
 
 ---
 
-### Dependencies
+### 3. Install Dependencies
 
-```
+```bash
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
----
+If installing manually, required packages include:
 
-## ▶️ Run the Application
-
-From the project directory:
-
-```
-python3 ImageProcessorGUI.py
+```bash
+pip install numpy opencv-python astropy photutils matplotlib pillow scikit-image
 ```
 
 ---
 
-## 📦 Packaging (Coming Soon)
+### 4. tkinter Setup
 
-Planned:
-- macOS `.app`
-- Windows `.exe`
-- Installer / DMG distribution
+macOS (Homebrew Python):
+```bash
+brew install python-tk
+```
+
+Windows:
+- tkinter is included with standard Python installation
+- If missing, reinstall Python and ensure "tcl/tk" is selected
 
 ---
 
-## 🧭 Usage
+### 5. Run the Application
+
+```bash
+python AF_diffraction_spikes_gui.py
+# or
+python3 AF_diffraction_spikes_gui.py
+```
+
+---
+
+## Troubleshooting
+
+### Missing cv2 (OpenCV)
+```text
+ModuleNotFoundError: No module named 'cv2'
+```
+Fix:
+```bash
+pip install opencv-python
+```
+
+---
+
+### Logo Not Loading
+If the logo fails to load, ensure:
+- You are running from the project root
+- The file exists at: `assets/astroAF_logo2.png`
+
+---
+
+### tkinter Errors
+- Ensure tkinter is installed (see above)
+- On macOS, ensure you are using Homebrew Python with tkinter support
+
+---
+
+### General Tip
+Always run the app from the project root directory to ensure relative paths resolve correctly.
+
+## Usage
 
 ### 1. Load Image
-- Supports FIT, TIFF, PNG, JPG
+Supported input formats:
+- FIT / FITS
+- TIFF
+- PNG
+- JPG / JPEG
 
 ### 2. Adjust Parameters
 Use sliders to control:
-- Minimum / Maximum Threshold
+- Minimum Threshold
+- Maximum Threshold
 - Spike Length
 - Spike Thickness
 - Blur Kernel
 - Blur Strength
 - Rotation Angle
 
-Hover over the ⓘ icons for detailed explanations.
-
----
+Hover over the info icons for details on each setting.
 
 ### 3. Process
-- Generates diffraction spikes
-- Updates preview instantly
-
----
+- Generates diffraction spikes on detected stars
+- Updates processed preview
+- Maintains responsive workflow while processing in the background
 
 ### 4. Save
-- Choose output format (TIFF recommended)
-- FIT supports scientific or RGB modes
+Supported output formats:
+- FIT / FITS
+- TIFF
+- PNG
+- JPEG
+
+Notes:
+- TIFF is recommended for general processed-image workflows
+- FIT supports scientific and RGB display save modes
 
 ---
 
-## ⚠️ Notes
-
-- FIT files are typically **monochrome** in astrophotography
-- RGB FIT output is for visualization compatibility
-- TIFF is the best format for processed image workflows
+## Notes
+- FIT files are commonly monochrome in astrophotography workflows
+- TIFF is typically the best non-FIT output format for processed images
+- Renderer-specific defaults are used internally for format-aware behavior
+- Every image is different; parameter tuning is expected and part of normal use
 
 ---
 
-## ❤️ Support
+## Architecture Notes
+Version 2 includes major internal improvements:
+- Type handling centralized through a shared image type utility
+- Format-specific renderers for FIT, TIFF, PNG, and JPEG
+- Shared base spike rendering logic for consistent behavior
+- Format-specific save handlers
+- Cleaner extension path for future formats
 
+---
+
+## Support
 If you like this project, consider supporting development:
 
 <a href="https://www.buymeacoffee.com/AstroAF" target="_blank">
@@ -164,12 +243,14 @@ If you like this project, consider supporting development:
 
 ---
 
-## 📜 License
+## License
 MIT License
 
 ---
 
-## 👤 Author
-Douglas Reynolds  
+## Author
+Douglas Reynolds
 🌐 https://astroaf.space  
 📺 https://youtube.com/@AstroAF
+
+---
