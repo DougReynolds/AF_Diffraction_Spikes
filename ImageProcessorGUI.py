@@ -65,6 +65,8 @@ import numpy as np
 import io
 import threading
 
+from util.resource_path import resource_path
+
 
 class ImageProcessorGUI:
     def __init__(self, root):
@@ -76,7 +78,7 @@ class ImageProcessorGUI:
         self.root.configure(bg="black")
 
         # Placeholder for logo image
-        self.logo_image = tk.PhotoImage(file="./assets/astroAF_logo2.png")
+        self.logo_image = tk.PhotoImage(file=resource_path("assets/astroAF_logo2.png"))
 
         # Variables for storing user input
         self.input_image_var = tk.StringVar()

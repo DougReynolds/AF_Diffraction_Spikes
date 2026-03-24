@@ -3,3 +3,7 @@ __pycache__
 .venv
 # Generated output images
 output.*
+build/
+dist/
+*.iconset/
+base.png

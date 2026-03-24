@@ -1,11 +1,34 @@
-# StarSpikesPy (AstroAF Diffraction Spikes) — V2
+# AstroAF Diffraction Spikes — V2
 
-![AF Diffraction Spikes](/assets/astroAF_logo2.png "AF Diffraction Spikes")
+![AstroAF Diffraction Spikes](/assets/astroAF_diffraction_spikes_social_logo.jpg "AstroAF Diffraction Spikes")
+
+## Table of Contents
+- [Overview](#overview)
+- [Key Features](#key-features)
+- [UI Overview](#ui-overview)
+- [Installation (Recommended)](#installation-recommended)
+- [Build From Source](#build-from-source)
+- [Troubleshooting](#troubleshooting)
+- [Usage](#usage)
+- [Notes](#notes)
+- [Architecture Notes](#architecture-notes)
+- [Support](#support)
+- [License](#license)
+- [Author](#author)
+
+---
 
 ## Overview
-StarSpikesPy is a desktop astrophotography tool that adds realistic diffraction spikes to stars while preserving image fidelity and supporting astrophotography-oriented workflows.
+AstroAF Diffraction Spikes is a desktop astrophotography tool designed to add realistic, physically-inspired diffraction spikes to stars while preserving the integrity of the original image. It is intended for astrophotographers who want to achieve diffraction spike effects without using physical modifications such as wires or other attachments over the objective lens.
 
-Version 2 evolves the original TIFF-only script into a multi-format interactive desktop application with real-time preview, format-specific spike rendering, and improved save handling.
+Built for astrophotographers, the application provides an interactive workflow for enhancing images with diffraction spikes without compromising detail in nebulae, galaxies, or background structures. Version 2 introduces a fully interactive UI, fast preview workflow, significant performance improvements, and a robust processing pipeline that adapts to multiple image formats and bit depths.
+
+The tool intelligently detects stars using background modeling, high-pass filtering, and flux-based filtering to isolate true point sources while rejecting diffuse structures. This ensures diffraction spikes are applied accurately and consistently across a wide range of astrophotography targets.
+
+
+With support for FIT/FITS, TIFF, PNG, and JPEG, AstroAF Diffraction Spikes bridges scientific workflows and visual processing, making it suitable for both data-driven imaging and final presentation output.
+
+For high bit-depth workflows (16-bit and 32-bit), processing is performed using the original image data, ensuring output images retain the same resolution and fidelity as the input files.
 
 ---
 
@@ -33,6 +56,7 @@ Version 2 evolves the original TIFF-only script into a multi-format interactive 
 #### Scientific Mode
 - Injects spikes into original FIT data
 - Maintains scientific-style output workflow
+- Preserves FITS header data
 
 #### RGB Display Mode
 - Saves processed image as RGB FIT cube
@@ -42,7 +66,7 @@ Version 2 evolves the original TIFF-only script into a multi-format interactive 
 
 #### Input Formats
 - FIT / FITS
-- TIFF
+- TIFF / TIF
 - PNG
 - JPEG
 
@@ -62,11 +86,69 @@ Version 2 evolves the original TIFF-only script into a multi-format interactive 
 
 ## UI Overview
 
-![AF Diffraction Spikes](/assets/ui_view.png "UI Overview")
+The application is divided into two primary preview panes and a configuration panel:
+
+- **Original Preview (Left):** Displays the loaded source image. Supports zoom and pan for detailed inspection.
+- **Processed Preview (Right):** Displays the output with diffraction spikes applied. Updates after processing to reflect current parameter settings.
+- **Preview Panes Zoom and Pan:** Zoom with your mouse wheel or trackpad and click and drag to pan.
+- **Left Pane Controls:** File loading, processing, and save actions.
+
+![Main Application UI](/assets/ui_view.png "Main Application UI")
 
 ---
 
-## Installation
+### Configuration Panel
+
+The configuration panel provides control over detection and rendering parameters:
+
+- **Loaded Filename:** Displays the currently loaded image file name for reference.
+- **Load Button:** Opens a file dialog to select an image for processing.
+- **Loading Indicator:** Displays status while an image is being loaded.
+
+- **Detection Minimum:** Controls the lower threshold for star detection.
+- **Detection Maximum:** Controls the upper threshold and filtering behavior for detected stars.
+
+- **Spike Shape Controls:**
+  - **Length:** Adjusts the length of diffraction spikes.
+  - **Thickness:** Controls the width of spikes.
+  - **Rotation:** Rotates the spike orientation.
+
+- **Presets:** Quickly apply predefined spike styles (mild, medium, or hot).
+
+- **Optical Controls:**
+  - **Blur Kernel:** Controls the size of the blur kernel applied to spikes.
+  - **Blur Strength:** Adjusts the intensity of the blur effect.
+
+- **Process Button:** Runs star detection and spike rendering.
+- **Processing Indicator:** Displays status while processing is running.
+
+- **Save Image:** Saves the processed output to the selected format.
+- **Scientific FITS Option:** Enables saving FIT output with preserved scientific data and headers.
+
+- **Tooltips:** All controls include tooltips for additional guidance.
+
+![Configuration Panel](/assets/configuration.png "Configuration Controls")
+
+---
+
+## Installation (Recommended)
+
+Download the latest release from GitHub:
+https://github.com/DougReynolds/AF_Diffraction_Spikes/releases
+
+### macOS
+- Download the `.app` bundle from the latest release
+- Open the app (you may need to allow it in System Settings → Privacy & Security)
+
+### Windows
+- Download the `.exe` from the latest release
+- Double-click to run (no additional setup required)
+
+No Python installation or dependency setup is required when using the installer.
+
+---
+
+## Build From Source
 
 ### Requirements
 - Python 3.11+
@@ -79,7 +161,7 @@ Version 2 evolves the original TIFF-only script into a multi-format interactive 
 ```bash
 # HTTPS (recommended)
 git clone https://github.com/DougReynolds/AF_Diffraction_Spikes.git
-cd StarSpikesPy
+cd AF_Diffraction_Spikes
 
 # OR (SSH, if configured)
 # git clone git@github.com:DougReynolds/AF_Diffraction_Spikes.git
@@ -98,8 +180,8 @@ Then extract and open a terminal in the extracted folder.
 
 macOS / Linux:
 ```bash
-python3 -m venv venv
-source venv/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
 Windows (PowerShell):
@@ -158,14 +240,6 @@ Fix:
 ```bash
 pip install opencv-python
 ```
-
----
-
-### Logo Not Loading
-If the logo fails to load, ensure:
-- You are running from the project root
-- The file exists at: `assets/astroAF_logo2.png`
-
 ---
 
 ### tkinter Errors
@@ -235,6 +309,9 @@ Version 2 includes major internal improvements:
 ---
 
 ## Support
+
+![AF Diffraction Spikes](/assets/astroAF_logo2.png "AF Diffraction Spikes")
+
 If you like this project, consider supporting development:
 
 <a href="https://www.buymeacoffee.com/AstroAF" target="_blank">
