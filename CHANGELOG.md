@@ -29,14 +29,27 @@ https://keepachangelog.com/en/1.0.0/
   - RGB display (3-plane FIT cube)
 
 ### ⚡ Performance
-- Background threading for image loading
-- Background threading for processing
-- Non-blocking UI (no freezing)
-- Faster rendering pipeline
+- Background threading for image loading and processing
+- Non-blocking UI (no freezing during operations)
+- Improved responsiveness during large image processing
+- Optimized rendering pipeline
+
 
 ### 🛠️ Changed
 - Migrated from script-based tool to full GUI application
 - Replaced static processing flow with real-time preview workflow
+
+### 📦 Distribution
+- macOS application bundle (.app) for native desktop use
+- Windows standalone executable (.exe) for one-click launch
+- No Python or dependency installation required for end users
+- Cross-platform distribution support (macOS and Windows)
+
+### 🧠 Internal Improvements
+- Added resource_path utility for packaged asset loading
+- PyInstaller configuration for macOS and Windows builds
+- Application icon integration for macOS bundle
+- Improved startup reliability in packaged environments
 
 ### 🐛 Fixed
 - Zoom behavior scaling container incorrectly
