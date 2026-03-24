@@ -7,3 +7,4 @@ build/
 dist/
 *.iconset/
 base.png
+release/
