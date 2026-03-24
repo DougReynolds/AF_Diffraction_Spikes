@@ -2,6 +2,8 @@
 
 ![AstroAF Diffraction Spikes](/assets/astroAF_diffraction_spikes_social_logo.jpg "AstroAF Diffraction Spikes")
 
+![](/assets/IC-410_processed.jpeg "")
+
 ## Table of Contents
 - [Overview](#overview)
 - [Key Features](#key-features)
